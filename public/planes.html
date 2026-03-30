@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes y Facturación | OnSaTech SaaS</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <link rel="stylesheet" href="app.css">
+
+    <style>
+        body { padding: 60px 20px; background-image: radial-gradient(circle at top center, rgba(139, 92, 246, 0.05), transparent 60%); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Elige tu Plan de OnSaTech</h1>
+        <p>Automatiza tus ventas y libera tu tiempo. Selecciona el plan que mejor se adapte al volumen de tu negocio.</p>
+        <div style="margin-top: 20px; display: inline-block; background: var(--surface); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
+            Operando bajo el ID: <span id="display-tenant" style="font-weight: 600; color: var(--primary); margin-left: 5px;">Cargando...</span>
+        </div>
+    </div>
+
+    <div class="pricing-grid">
+        <div class="plan-card">
+            <div class="plan-name">Plan Emprendedor</div>
+            <div class="plan-price">$499<span> / mes</span></div>
+            <ul class="feature-list">
+                <li><i class="ph-fill ph-check-circle"></i> Integración de 1 Número de WhatsApp</li>
+                <li><i class="ph-fill ph-check-circle"></i> Menú interactivo ilimitado</li>
+                <li><i class="ph-fill ph-check-circle"></i> Envío de galería multimedia básica</li>
+                <li><i class="ph-fill ph-check-circle"></i> Soporte técnico por correo</li>
+            </ul>
+            <button class="btn btn-outline" onclick="iniciarPago('emprendedor')">Seleccionar Plan</button>
+        </div>
+
+        <div class="plan-card popular">
+            <div class="badge-popular">MÁS POPULAR</div>
+            <div class="plan-name">Plan Empresarial</div>
+            <div class="plan-price">$899<span> / mes</span></div>
+            <ul class="feature-list">
+                <li><i class="ph-fill ph-check-circle"></i> Integración de 1 Número de WhatsApp</li>
+                <li><i class="ph-fill ph-check-circle"></i> Menú interactivo ilimitado</li>
+                <li><i class="ph-fill ph-check-circle"></i> Respuestas inteligentes con motor IA</li>
+                <li><i class="ph-fill ph-check-circle"></i> Alertas de derivación a personal humano</li>
+                <li><i class="ph-fill ph-check-circle"></i> Soporte técnico prioritario 24/7</li>
+            </ul>
+            <button class="btn btn-primary" onclick="iniciarPago('empresarial')">Seleccionar Plan</button>
+        </div>
+    </div>
+
+    <a href="/panelcontrol.html" class="back-link"><i class="ph ph-arrow-left"></i> Volver al Panel de Control</a>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // Validamos que el usuario esté logueado
+        const tenantId = localStorage.getItem('tenantId');
+        const authToken = localStorage.getItem('authToken');
+
+        if (!tenantId || !authToken) {
+            window.location.href = '/iniciosesion.html'; // 🔥 RUTA CORREGIDA
+        } else {
+            document.getElementById('display-tenant').innerText = tenantId;
+        }
+
+        const notificar = (mensaje, tipo = 'info') => {
+            const bg = tipo === 'success' ? '#10b981' : tipo === 'error' ? '#ef4444' : '#8b5cf6';
+            Toastify({ text: mensaje, duration: 3000, gravity: "top", position: "center", style: { background: bg, borderRadius: "6px", boxShadow: "0 10px 20px rgba(0,0,0,0.3)" } }).showToast();
+        };
+
+        const iniciarPago = async (planElegido) => {
+            notificar(`Preparando pasarela segura para el plan ${planElegido}...`, "info");
+            
+            // AQUÍ conectaremos con Stripe en el futuro
+            console.log("Iniciando pasarela para el tenant:", tenantId);
+            setTimeout(() => {
+                notificar("Esta función se conectará a Stripe pronto.", "error");
+            }, 1500);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control | OnSaTech SaaS</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <h2 style="background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;">OnSaTech</h2>        
+        <div class="tenant-banner">
+            ID de Espacio:
+            <strong id="display-tenant">Cargando...</strong>
+        </div>
+
+        <nav>
+            <div class="nav-item active" onclick="cambiarVista('dashboard')"><i class="ph ph-gauge"></i> Monitor de IA</div>
+            <div class="nav-item" onclick="cambiarVista('configuracion')"><i class="ph ph-sliders-horizontal"></i> Respuestas</div>
+            <div style="flex-grow: 1;"></div>
+            <div class="nav-item" onclick="cerrarSesion()" style="color: var(--danger); margin-top: auto; border: 1px solid rgba(239, 68, 68, 0.2);"><i class="ph ph-sign-out"></i> Cerrar Sesión</div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <section id="vista-dashboard">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h1>Estado del Motor</h1>
+                <span id="badge-status" class="status-badge" style="background: #3f3f46;">DESCONECTADO</span>
+            </div>
+
+            <div class="card" style="text-align: center; padding: 60px 20px;">
+                <div id="ui-loading" class="hidden">
+                    <i class="ph ph-spinner-gap" style="font-size: 4rem; color: var(--primary); animation: spin 1s linear infinite; margin-bottom: 15px;"></i>
+                    <h3 style="margin-bottom: 5px;">Conectando al servidor...</h3>
+                    <p>Estableciendo túnel seguro con OnSaTech Cloud</p>
+                </div>
+
+                <div id="ui-qr" class="hidden">
+                    <h3 style="margin-bottom: 5px;">Vincular Dispositivo</h3>
+                    <p style="margin-bottom: 20px;">Abre WhatsApp > Dispositivos vinculados > Escanear QR</p>
+                    <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);">
+                        <img id="qr-image" src="" alt="Código QR" style="width: 250px; height: 250px; display: block;">
+                    </div>
+                </div>
+
+                <div id="ui-online" class="hidden">
+                    <i class="ph-fill ph-check-circle" style="font-size: 5rem; color: var(--success); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); margin-bottom: 15px;"></i>
+                    <h2 style="margin-bottom: 5px;">Motor Activo</h2>
+                    <p>El asistente inteligente está procesando mensajes entrantes.</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                        <button class="btn" style="background: #f59e0b; color: #fff;" onclick="toggleMotorBot('pausar')"><i class="ph-fill ph-pause"></i> Intervenir Bot</button>
+                        <button class="btn btn-danger" onclick="if(confirm('¿Seguro que deseas destruir la conexión? Deberás volver a escanear el QR.')) toggleMotorBot('desvincular')"><i class="ph ph-trash"></i> Desconectar</button>
+                    </div>
+                </div>
+
+                <div id="ui-paused" class="hidden">
+                    <i class="ph-fill ph-pause-circle" style="font-size: 5rem; color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.4); margin-bottom: 15px;"></i>
+                    <h2 style="margin-bottom: 5px;">Bot en Pausa</h2>
+                    <p>Modo manual activado. El sistema no responderá hasta que lo reanudes.</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="toggleMotorBot('reanudar')"><i class="ph-fill ph-play"></i> Activar Motor</button>
+                        <button class="btn btn-danger" onclick="if(confirm('¿Seguro que deseas destruir la conexión?')) toggleMotorBot('desvincular')"><i class="ph ph-trash"></i> Desconectar</button>
+                    </div>
+                </div>
+
+                <div id="ui-offline">
+                    <i class="ph ph-plugs-connected" style="font-size: 5rem; color: var(--text-muted); margin-bottom: 15px;"></i>
+                    <h2 style="margin-bottom: 5px;">Listo para operar</h2>
+                    <p>No hay ningún dispositivo WhatsApp vinculado a este espacio de trabajo.</p>
+                    <button class="btn btn-primary" style="margin-top: 25px; padding: 12px 24px; font-size: 1.1rem;" onclick="toggleMotorBot('encender')">
+                        <i class="ph-fill ph-qr-code"></i> Generar Código QR
+                    </button>
+                </div>
+
+                <div id="ui-blocked" class="hidden" style="text-align: center; padding: 40px; border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); border-radius: 12px; margin-top: 20px;">
+                    <i class="ph-fill ph-warning-octagon" style="font-size: 5rem; color: var(--danger); margin-bottom: 15px; text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);"></i>
+                    <h3 style="color: var(--danger); margin: 0 0 10px 0; font-size: 1.8rem;">Prueba Gratuita Agotada</h3>
+                    <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 25px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                        El sistema de seguridad detectó que este número <strong>ya utilizó una licencia gratuita</strong> en otra cuenta.<br><br>
+                        Desbloquea el poder total de OnSaTech adquiriendo una suscripción activa.
+                    </p>
+                    <button class="btn btn-primary" onclick="window.location.href='/planes.html'" style="padding: 12px 24px; font-size: 1.1rem;">
+                        <i class="ph-fill ph-rocket-launch"></i> Ver Planes y Precios
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="vista-configuracion" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h1>Centro de Respuestas</h1>
+                <button class="btn btn-primary" onclick="guardarConfiguracion()"><i class="ph-fill ph-floppy-disk"></i> Guardar Cambios</button>
+            </div>
+
+            <div class="tabs-container">
+                <button class="tab-btn active" onclick="cambiarTabConfig('panel-mensajes', this)">Flujo Inicial</button>
+                <button class="tab-btn" onclick="cambiarTabConfig('panel-menu', this)">Menú Fijo</button>
+                <button class="tab-btn" onclick="cambiarTabConfig('panel-reglas', this)">Inteligencia (IA)</button>
+            </div>
+
+            <div id="panel-mensajes" class="tab-panel active">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="margin: 0 0 5px 0;">Secuencia de Bienvenida</h3>
+                            <p style="margin: 0;">Diseña el primer impacto visual. El bot enviará estos mensajes simulando pausas humanas.</p>
+                        </div>
+                        <button class="btn btn-primary" style="font-size: 0.9rem;" onclick="agregarSaludoDOM()"><i class="ph ph-plus"></i> Nueva Burbuja</button>
+                    </div>
+                    
+                    <div id="contenedor-saludos"></div>
+                </div>
+            </div>
+
+            <div id="panel-menu" class="tab-panel">
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 5px;">Encabezado del Menú</h3>
+                    <p style="margin-bottom: 15px;">Instrucciones para tus clientes antes de mostrarles las opciones.</p>
+                    <input type="text" id="inp-cabecera" placeholder="Ej: Escribe el número de lo que deseas consultar:">
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="margin: 0 0 5px 0;">Opciones Dinámicas</h3>
+                            <p style="margin: 0;">El bot reconocerá el número ingresado y responderá automáticamente.</p>
+                        </div>
+                        <button class="btn btn-primary" style="font-size: 0.9rem;" onclick="agregarOpcionDOM()"><i class="ph ph-plus"></i> Añadir Opción</button>
+                    </div>
+                    <div id="contenedor-opciones"></div>
+                </div>
+            </div>
+
+            <div id="panel-reglas" class="tab-panel">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="margin: 0 0 5px 0;">Palabras Clave</h3>
+                            <p style="margin: 0;">Si el cliente escribe estas palabras fuera del menú, el bot intervendrá.</p>
+                        </div>
+                        <button class="btn btn-primary" style="font-size: 0.9rem;" onclick="agregarReglaDOM()"><i class="ph ph-plus"></i> Nueva Regla</button>
+                    </div>
+                    <div id="contenedor-reglas"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

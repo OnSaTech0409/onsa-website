@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comienza tu prueba | OnSaTech SaaS</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <link rel="stylesheet" href="app.css">
+
+    <style>
+        body { justify-content: center; align-items: center; background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.08), transparent 40%); overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <div class="registro-wrapper">
+        <button id="btn-back" class="back-btn hidden" onclick="irAlPaso(1)">
+            <i class="ph-bold ph-arrow-left"></i> Atrás
+        </button>
+
+        <div class="registro-card">
+            <h2 class="header-brand">OnSaTech</h2>
+            <p id="dinamic-subtitle" class="subtitle">Despliega tu asistente IA y automatiza tus ventas. Obtén 7 días de prueba sin tarjeta.</p>
+
+            <div id="paso-1" class="step active">
+                <button class="btn btn-social" onclick="notificar('El inicio con Google se habilitará próximamente', 'info')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="Google"> 
+                    Continuar con Google
+                </button>
+                <button class="btn btn-social" onclick="notificar('El inicio con Microsoft se habilitará próximamente', 'info')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" width="20" alt="Microsoft"> 
+                    Continuar con Microsoft
+                </button>
+
+                <div class="divider"><span>O usa tu correo</span></div>
+
+                <label for="reg-email">Correo electrónico de trabajo</label>
+                <input type="email" id="reg-email" placeholder="hola@tuempresa.com" onkeypress="if(event.key === 'Enter') irAlPaso(2)">
+
+                <button class="btn btn-primary" onclick="irAlPaso(2)">
+                    Continuar con correo <i class="ph-bold ph-arrow-right"></i>
+                </button>
+            </div>
+
+            <div id="paso-2" class="step">
+                <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+                    <i class="ph-fill ph-user-circle" style="font-size: 1.5rem; color: var(--primary);"></i>
+                    <span id="display-email" style="font-size: 0.9rem; font-weight: 500;">...</span>
+                </div>
+
+                <label for="reg-password">Crea una contraseña segura</label>
+                <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" onkeypress="if(event.key === 'Enter') crearCuenta()">
+
+                <button id="btn-registro" class="btn btn-primary" onclick="crearCuenta()" style="margin-top: 10px;">
+                    Crear cuenta <i class="ph-bold ph-check"></i>
+                </button>
+            </div>
+
+            <p class="footer-link">
+                ¿Ya tienes una cuenta? <a href="/iniciosesion.html">Inicia sesión</a> </p>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
